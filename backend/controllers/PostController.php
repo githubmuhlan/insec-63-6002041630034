@@ -8,7 +8,7 @@ use backend\models\PostSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
+
 /**
  * PostController implements the CRUD actions for Post model.
  */
@@ -20,18 +20,6 @@ class PostController extends Controller
     public function behaviors()
     {
         return [
-            'access' => [
-                'class' => AccessControl::className(),
-                    'rules' => [
-                                [
-                                    'actions' => ['login', 'create'],
-                                    'allow' => true,
-                                    'roles' => ['@'],
-                                ],
-                            ],
-                ],
-            
-
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
@@ -45,7 +33,7 @@ class PostController extends Controller
      * Lists all Post models.
      * @return mixed
      */
-  public function actionIndex()
+    public function actionIndex()
     {   
         if (Yii::$app->user->can('post-list')){
         $searchModel = new PostSearch();
@@ -54,8 +42,10 @@ class PostController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-        ]);
-    }
+            ]);
+        }else{
+            echo "Need to contact admin";
+        }
     }
 
     /**
@@ -65,13 +55,16 @@ class PostController extends Controller
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionView($id)
-    {
+    {   
         if (Yii::$app->user->can('post-view')){
         return $this->render('view', [
             'model' => $this->findModel($id),
-        ]);
+            ]);
+        }else{
+            echo "Need to contact admin";
+        }
     }
-    }
+
     /**
      * Creates a new Post model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -89,8 +82,11 @@ class PostController extends Controller
         return $this->render('create', [
             'model' => $model,
         ]);
+        }else{
+            echo "Need to contact admin";
+        }
     }
-    }
+
     /**
      * Updates an existing Post model.
      * If update is successful, the browser will be redirected to the 'view' page.
@@ -100,7 +96,7 @@ class PostController extends Controller
      */
     public function actionUpdate($id)
     {
-        if (Yii::$app->user->can('post-update')){
+        if (Yii::$app->user->can('post-create')){
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -110,8 +106,11 @@ class PostController extends Controller
         return $this->render('update', [
             'model' => $model,
         ]);
+        }else{
+            echo "Need to contact admin";
+        }
     }
-    }
+
     /**
      * Deletes an existing Post model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
@@ -125,8 +124,11 @@ class PostController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+        }else{
+            echo "Need to contact admin";
+        }
     }
-    }
+
     /**
      * Finds the Post model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
